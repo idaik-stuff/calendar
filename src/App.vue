@@ -2,34 +2,37 @@
   <div id="app">        
       <Calendar
             language="es"
+            render-style="background"
             :enable-range-selection="true"
             :data-source="dataSource"
             :enable-context-menu="true"
-            :context-menu-items="contextMenuItems"
+            @context-menu-items="contextMenuItems"
+            @mouse-on-day="mouseOnDay" 
+            @mouse-out-day="mouseOutDay"
             @select-range="selectRange">
   </Calendar>
   
-<b-modal :title="currentId != null ? 'Edit event' : 'Add event'" ok-title="Save" v-model="show" @ok="saveEvent">
+<b-modal :title="currentId != null ? 'Editar evento' : 'Añadir evento'" ok-title="Guardar" v-model="show" @ok="saveEvent">
     <form class="form-horizontal">
       <div class="form-group row">
-        <label for="event-name" class="col-sm-2 control-label">Name</label>
+        <label for="event-name" class="col-sm-2 control-label">Nombre</label>
         <div class="col-sm-10">
           <input id="event-name" type="text" class="form-control" v-model="currentName" />
         </div>
       </div>
       <div class="form-group row">
-        <label for="event-location" class="col-sm-2 control-label">Location</label>
+        <label for="event-location" class="col-sm-2 control-label">Notas</label>
         <div class="col-sm-10">
           <input id="event-location" type="text" class="form-control" v-model="currentLocation" />
         </div>
       </div>
       <div class="form-group row">
-        <label for="min-date" class="col-sm-2 control-label">Dates</label>
+        <label for="min-date" class="col-sm-2 control-label">Fechas</label>
         <div class="col-sm-10">
           <div class="input-group input-daterange">
             <input id="min-date" type="date" class="form-control" v-model="currentStartDate" />
             <div class="input-group-prepend input-group-append">
-              <div class="input-group-text">to</div>
+              <div class="input-group-text">a</div>
             </div>
             <input type="date" class="form-control" v-model="currentEndDate" />
           </div>
@@ -48,6 +51,10 @@ import Calendar from 'v-year-calendar';
 import 'v-year-calendar/locales/v-year-calendar.es';
 
 import moment from 'moment'
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+
+
 
 var currentYear = new Date().getFullYear();
 
@@ -59,7 +66,8 @@ export default {
   components: {
     Calendar
   },
-  data: function() {
+  data: 
+  function() {
     return {
       show: false,
       currentId: null,
@@ -67,6 +75,7 @@ export default {
       currentEndDate: null,
       currentName: null,
       currentLocation: null,
+      tooltip: null,
       dataSource: [
         {
           id: 0,
@@ -164,6 +173,40 @@ export default {
     };
   },
   methods: {
+    //ini-IIB Tooltip
+    mouseOnDay: function(e) {
+      if (e.events.length > 0) {
+        var content = '';
+
+        for (var i in e.events) {
+          content += '<div class="event-tooltip-content">'
+            + '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>'
+            + '<div class="event-details">' + e.events[i].location + '</div>'
+            + '</div>';
+        }
+
+        if (this.tooltip != null) {
+          this.tooltip.destroy();
+          this.tooltip = null;
+        }
+
+        this.tooltip = tippy(e.element, {
+           placement: 'right',
+            content: content,
+            animateFill: false,
+            animation: 'shift-away',
+            arrow: true
+        });
+        this.tooltip.show();
+      }
+    },
+    mouseOutDay: function() {
+      if (this.tooltip !== null) {
+        this.tooltip.destroy();
+        this.tooltip = null;
+      }
+    },
+     //fin-IIB
     selectRange: function(e) {
       this.currentId = null;
       this.currentName = null;
@@ -208,4 +251,5 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
 </style>
