@@ -47,6 +47,8 @@ import Calendar from 'v-year-calendar';
 //IIB
 import 'v-year-calendar/locales/v-year-calendar.es';
 
+import moment from 'moment'
+
 var currentYear = new Date().getFullYear();
 
 console.log(Calendar);
@@ -142,11 +144,14 @@ export default {
           text: "Update",
           click: evt => {
             this.currentId = evt.id;
-            this.currentStartDate = evt.startDate.toISOString().substring(0, 10);
-            this.currentEndDate = evt.endDate.toISOString().substring(0, 10);
+            //IIB Cabio formato en fecha
+            this.currentStartDate = moment(evt.startDate).format('YYYY-MM-DD');
+            this.currentEndDate = moment(evt.endDate).format('YYYY-MM-DD');
             this.currentName = evt.name;
             this.currentLocation = evt.location;
             this.show = true;
+
+           
           }
         },
         {
@@ -163,19 +168,20 @@ export default {
       this.currentId = null;
       this.currentName = null;
       this.currentLocation = null;
-      this.currentStartDate = e.startDate.toISOString().substring(0, 10);
-      this.currentEndDate = e.endDate.toISOString().substring(0, 10);
+      //IIB Cabio formato en fecha
+      this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
+      this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
       this.show = true;
     },
     saveEvent: function() {
       if (this.currentId == null) {
         // Add event
-        var id = Math.max(...this.state.dataSource.map(evt => evt.id)) + 1;
+        var id = Math.max(...this.dataSource.map(evt => evt.id)) + 1;
         
         this.dataSource.push({
           id: id,
-          startDate: this.currentStartDate,
-          endDate: this.currentEndDate,
+          startDate: new Date(this.currentStartDate),
+          endDate: new Date(this.currentEndDate),
           name: this.currentName,
           location: this.currentLocation,
         });

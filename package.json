@@ -10,6 +10,7 @@
   "dependencies": {
     "bootstrap-vue": "^2.5.0",
     "core-js": "^3.6.4",
+    "moment": "^2.24.0",
     "v-year-calendar": "^1.0.0-alpha.5",
     "vue": "^2.6.11"
   },
