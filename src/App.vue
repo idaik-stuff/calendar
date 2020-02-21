@@ -1,11 +1,14 @@
 <template>
   <div id="app">
-    <Calendar></Calendar>
+    <Calendar language="es"></Calendar>
   </div>
 </template>
 
 <script>
 import Calendar from 'v-year-calendar';
+
+//IIB
+import 'v-year-calendar/locales/v-year-calendar.es';
 
 export default {
   name: 'App',
