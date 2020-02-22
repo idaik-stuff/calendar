@@ -6,7 +6,7 @@
             :enable-range-selection="true"
             :data-source="dataSource"
             :enable-context-menu="true"
-            @context-menu-items="contextMenuItems"
+            :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
             @select-range="selectRange">
