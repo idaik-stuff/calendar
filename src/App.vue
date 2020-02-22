@@ -4,7 +4,7 @@
             language="es"
             render-style="background"
             :enable-range-selection="true"
-            :data-source="dataSource"
+            :data-source="getDataSource"
             :enable-context-menu="true"
             :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
@@ -54,9 +54,31 @@ import moment from 'moment'
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
+//IIB ini-Firebse
+import Firebase from 'firebase'
 
 
-var currentYear = new Date().getFullYear();
+let config = {
+   //Datos de configuración
+    apiKey: "AIzaSyB6LgZ0e26Xjt1VdYdQIquY2Imdc2WgRiY",
+    authDomain: "takida-calendar.firebaseapp.com",
+    databaseURL: "https://takida-calendar.firebaseio.com",
+    projectId: "takida-calendar",
+    storageBucket: "takida-calendar.appspot.com",
+    messagingSenderId: "943694385020",
+    appId: "1:943694385020:web:e649804818dd9550a75ef9"
+}
+
+let app = Firebase.initializeApp(config);
+let db = app.database();
+let reservas_db = db.ref('reservas');
+
+
+console.log(reservas_db);
+
+//IIB fin firebase
+
+//var currentYear = new Date().getFullYear();
 
 console.log(Calendar);
 
@@ -75,82 +97,83 @@ export default {
       currentEndDate: null,
       currentName: null,
       currentLocation: null,
-      tooltip: null,
-      dataSource: [
-        {
-          id: 0,
-          name: 'Google I/O',
-          location: 'San Francisco, CA',
-          startDate: new Date(currentYear, 4, 28),
-          endDate: new Date(currentYear, 4, 29)
-        },
-        {
-          id: 1,
-          name: 'Microsoft Convergence',
-          location: 'New Orleans, LA',
-          startDate: new Date(currentYear, 2, 16),
-          endDate: new Date(currentYear, 2, 19)
-        },
-        {
-          id: 2,
-          name: 'Microsoft Build Developer Conference',
-          location: 'San Francisco, CA',
-          startDate: new Date(currentYear, 3, 29),
-          endDate: new Date(currentYear, 4, 1)
-        },
-        {
-          id: 3,
-          name: 'Apple Special Event',
-          location: 'San Francisco, CA',
-          startDate: new Date(currentYear, 8, 1),
-          endDate: new Date(currentYear, 8, 1)
-        },
-        {
-          id: 4,
-          name: 'Apple Keynote',
-          location: 'San Francisco, CA',
-          startDate: new Date(currentYear, 8, 9),
-          endDate: new Date(currentYear, 8, 9)
-        },
-        {
-          id: 5,
-          name: 'Chrome Developer Summit',
-          location: 'Mountain View, CA',
-          startDate: new Date(currentYear, 10, 17),
-          endDate: new Date(currentYear, 10, 18)
-        },
-        {
-          id: 6,
-          name: 'F8 2015',
-          location: 'San Francisco, CA',
-          startDate: new Date(currentYear, 2, 25),
-          endDate: new Date(currentYear, 2, 26)
-        },
-        {
-          id: 7,
-          name: 'Yahoo Mobile Developer Conference',
-          location: 'New York',
-          startDate: new Date(currentYear, 7, 25),
-          endDate: new Date(currentYear, 7, 26)
-        },
-        {
-          id: 8,
-          name: 'Android Developer Conference',
-          location: 'Santa Clara, CA',
-          startDate: new Date(currentYear, 11, 1),
-          endDate: new Date(currentYear, 11, 4)
-        },
-        {
-          id: 9,
-          name: 'LA Tech Summit',
-          location: 'Los Angeles, CA',
-          startDate: new Date(currentYear, 10, 17),
-          endDate: new Date(currentYear, 10, 17)
-        }
-      ],
+      tooltip: null, 
+     // datasource:reservas_db,     
+      // dataSource: [
+      //   {
+      //     id: 0,
+      //     name: 'Google I/O',
+      //     location: 'San Francisco, CA',
+      //     startDate: new Date(currentYear, 4, 28),
+      //     endDate: new Date(currentYear, 4, 29)
+      //   },
+      //   {
+      //     id: 1,
+      //     name: 'Microsoft Convergence',
+      //     location: 'New Orleans, LA',
+      //     startDate: new Date(currentYear, 2, 16),
+      //     endDate: new Date(currentYear, 2, 19)
+      //   },
+      //   {
+      //     id: 2,
+      //     name: 'Microsoft Build Developer Conference',
+      //     location: 'San Francisco, CA',
+      //     startDate: new Date(currentYear, 3, 29),
+      //     endDate: new Date(currentYear, 4, 1)
+      //   },
+      //   {
+      //     id: 3,
+      //     name: 'Apple Special Event',
+      //     location: 'San Francisco, CA',
+      //     startDate: new Date(currentYear, 8, 1),
+      //     endDate: new Date(currentYear, 8, 1)
+      //   },
+      //   {
+      //     id: 4,
+      //     name: 'Apple Keynote',
+      //     location: 'San Francisco, CA',
+      //     startDate: new Date(currentYear, 8, 9),
+      //     endDate: new Date(currentYear, 8, 9)
+      //   },
+      //   {
+      //     id: 5,
+      //     name: 'Chrome Developer Summit',
+      //     location: 'Mountain View, CA',
+      //     startDate: new Date(currentYear, 10, 17),
+      //     endDate: new Date(currentYear, 10, 18)
+      //   },
+      //   {
+      //     id: 6,
+      //     name: 'F8 2015',
+      //     location: 'San Francisco, CA',
+      //     startDate: new Date(currentYear, 2, 25),
+      //     endDate: new Date(currentYear, 2, 26)
+      //   },
+      //   {
+      //     id: 7,
+      //     name: 'Yahoo Mobile Developer Conference',
+      //     location: 'New York',
+      //     startDate: new Date(currentYear, 7, 25),
+      //     endDate: new Date(currentYear, 7, 26)
+      //   },
+      //   {
+      //     id: 8,
+      //     name: 'Android Developer Conference',
+      //     location: 'Santa Clara, CA',
+      //     startDate: new Date(currentYear, 11, 1),
+      //     endDate: new Date(currentYear, 11, 4)
+      //   },
+      //   {
+      //     id: 9,
+      //     name: 'LA Tech Summit',
+      //     location: 'Los Angeles, CA',
+      //     startDate: new Date(currentYear, 10, 17),
+      //     endDate: new Date(currentYear, 10, 17)
+      //   }
+      // ],
       contextMenuItems: [
         {
-          text: "Update",
+          text: "Actualizar",
           click: evt => {
             this.currentId = evt.id;
             //IIB Cabio formato en fecha
@@ -164,7 +187,7 @@ export default {
           }
         },
         {
-          text: "Delete",
+          text: "Borrar",
           click: evt => {
             this.dataSource = this.dataSource.filter(item => item.id != evt.id);
           }
@@ -173,6 +196,53 @@ export default {
     };
   },
   methods: {
+    getDataSource:  function() 
+    {
+      return reservas_db.once('value', function(snapshot)
+     { 
+        let returnArr = [];
+        snapshot.forEach(function(childSnapshot) 
+         {
+           let id =childSnapshot.key;
+           let promise=reservas_db.child(id).once('value').then(function(){
+
+           }, function(error) {
+             console.error(error);
+           });
+            returnArr.push(promise);
+      // Fill the local data property with Firebase data
+         //return returnArr;     
+        });
+        return Promise.all(returnArr);
+        }, function(error){
+          console.error(error);
+        }).then(function(values){
+          console.log(values);
+        }    
+        );
+      
+    },   
+      // return reservas_db.items.map (r => ({
+      //         startDate: new Date(r.created_at),
+      //         endDate: new Date(r.created_at),
+      //         name: '#' + r.number + ' - ' + r.title,
+      //         details: r.comments + ' comments'
+      //       }));
+      //return fetch(`https://api.github.com/search/issues?q=repo:Paul-DS/bootstrap-year-calendar%20created:${year}-01-01..${year}-12-31`)
+        //.then(result => result.json())
+        //.then(result => {
+          // if (result.items) {
+          //   return result.items.map(r => ({
+          //     startDate: new Date(r.created_at),
+          //     endDate: new Date(r.created_at),
+          //     name: '#' + r.number + ' - ' + r.title,
+          //     details: r.comments + ' comments'
+          //   }));
+        //   }
+
+        //   return [];
+        // });
+   
     //ini-IIB Tooltip
     mouseOnDay: function(e) {
       if (e.events.length > 0) {

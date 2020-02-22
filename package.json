@@ -10,10 +10,12 @@
   "dependencies": {
     "bootstrap-vue": "^2.5.0",
     "core-js": "^3.6.4",
+    "firebase": "^7.9.1",
     "moment": "^2.24.0",
     "tippy.js": "^5.2.1",
     "v-year-calendar": "^1.0.0-alpha.5",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vuefire": "^2.2.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
