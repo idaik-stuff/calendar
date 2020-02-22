@@ -4,7 +4,7 @@
             language="es"
             render-style="background"
             :enable-range-selection="true"
-            :data-source="getDataSource"
+            :data-source="dataSource"
             :enable-context-menu="true"
             :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
@@ -45,18 +45,18 @@
 </template>
 
 <script>
-import Calendar from 'v-year-calendar';
+import Calendar from 'v-year-calendar'
 
 //IIB
-import 'v-year-calendar/locales/v-year-calendar.es';
+import 'v-year-calendar/locales/v-year-calendar.es'
 
 import moment from 'moment'
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css';
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
 
 //IIB ini-Firebse
-import Firebase from 'firebase'
-
+import * as firebase from 'firebase/app'
+import 'firebase/database'
 
 let config = {
    //Datos de configuración
@@ -69,108 +69,27 @@ let config = {
     appId: "1:943694385020:web:e649804818dd9550a75ef9"
 }
 
-let app = Firebase.initializeApp(config);
-let db = app.database();
-let reservas_db = db.ref('reservas');
+let app = firebase.initializeApp(config);
 
-
-console.log(reservas_db);
+let reservas_db = app.database().ref("reservas")
 
 //IIB fin firebase
-
-//var currentYear = new Date().getFullYear();
-
-console.log(Calendar);
-
 
 export default {
   name: 'App',
   components: {
     Calendar
   },
-  data: 
-  function() {
+  data: function() {
     return {
       show: false,
+      dataSource: [],
       currentId: null,
       currentStartDate: null,
       currentEndDate: null,
       currentName: null,
       currentLocation: null,
-      tooltip: null, 
-     // datasource:reservas_db,     
-      // dataSource: [
-      //   {
-      //     id: 0,
-      //     name: 'Google I/O',
-      //     location: 'San Francisco, CA',
-      //     startDate: new Date(currentYear, 4, 28),
-      //     endDate: new Date(currentYear, 4, 29)
-      //   },
-      //   {
-      //     id: 1,
-      //     name: 'Microsoft Convergence',
-      //     location: 'New Orleans, LA',
-      //     startDate: new Date(currentYear, 2, 16),
-      //     endDate: new Date(currentYear, 2, 19)
-      //   },
-      //   {
-      //     id: 2,
-      //     name: 'Microsoft Build Developer Conference',
-      //     location: 'San Francisco, CA',
-      //     startDate: new Date(currentYear, 3, 29),
-      //     endDate: new Date(currentYear, 4, 1)
-      //   },
-      //   {
-      //     id: 3,
-      //     name: 'Apple Special Event',
-      //     location: 'San Francisco, CA',
-      //     startDate: new Date(currentYear, 8, 1),
-      //     endDate: new Date(currentYear, 8, 1)
-      //   },
-      //   {
-      //     id: 4,
-      //     name: 'Apple Keynote',
-      //     location: 'San Francisco, CA',
-      //     startDate: new Date(currentYear, 8, 9),
-      //     endDate: new Date(currentYear, 8, 9)
-      //   },
-      //   {
-      //     id: 5,
-      //     name: 'Chrome Developer Summit',
-      //     location: 'Mountain View, CA',
-      //     startDate: new Date(currentYear, 10, 17),
-      //     endDate: new Date(currentYear, 10, 18)
-      //   },
-      //   {
-      //     id: 6,
-      //     name: 'F8 2015',
-      //     location: 'San Francisco, CA',
-      //     startDate: new Date(currentYear, 2, 25),
-      //     endDate: new Date(currentYear, 2, 26)
-      //   },
-      //   {
-      //     id: 7,
-      //     name: 'Yahoo Mobile Developer Conference',
-      //     location: 'New York',
-      //     startDate: new Date(currentYear, 7, 25),
-      //     endDate: new Date(currentYear, 7, 26)
-      //   },
-      //   {
-      //     id: 8,
-      //     name: 'Android Developer Conference',
-      //     location: 'Santa Clara, CA',
-      //     startDate: new Date(currentYear, 11, 1),
-      //     endDate: new Date(currentYear, 11, 4)
-      //   },
-      //   {
-      //     id: 9,
-      //     name: 'LA Tech Summit',
-      //     location: 'Los Angeles, CA',
-      //     startDate: new Date(currentYear, 10, 17),
-      //     endDate: new Date(currentYear, 10, 17)
-      //   }
-      // ],
+      tooltip: null,
       contextMenuItems: [
         {
           text: "Actualizar",
@@ -182,67 +101,29 @@ export default {
             this.currentName = evt.name;
             this.currentLocation = evt.location;
             this.show = true;
-
-           
           }
         },
         {
           text: "Borrar",
           click: evt => {
-            this.dataSource = this.dataSource.filter(item => item.id != evt.id);
+            this.reservas = this.reservas.filter(item => item.id != evt.id);
           }
         }
       ]
     };
   },
+  created: function() {
+    let self = this;
+    reservas_db.on("value", function(snapshot) {
+      let reservas = snapshot.val().map(reserva => Object.assign({}, reserva, {
+              startDate: new Date(Date.parse(reserva.startDate)),
+              endDate: new Date(Date.parse(reserva.endDate))
+            }));
+      console.log("EVENTS UPDATED", reservas);
+      self.dataSource = reservas;
+    });
+  },
   methods: {
-    getDataSource:  function() 
-    {
-      return reservas_db.once('value', function(snapshot)
-     { 
-        let returnArr = [];
-        snapshot.forEach(function(childSnapshot) 
-         {
-           let id =childSnapshot.key;
-           let promise=reservas_db.child(id).once('value').then(function(){
-
-           }, function(error) {
-             console.error(error);
-           });
-            returnArr.push(promise);
-      // Fill the local data property with Firebase data
-         //return returnArr;     
-        });
-        return Promise.all(returnArr);
-        }, function(error){
-          console.error(error);
-        }).then(function(values){
-          console.log(values);
-        }    
-        );
-      
-    },   
-      // return reservas_db.items.map (r => ({
-      //         startDate: new Date(r.created_at),
-      //         endDate: new Date(r.created_at),
-      //         name: '#' + r.number + ' - ' + r.title,
-      //         details: r.comments + ' comments'
-      //       }));
-      //return fetch(`https://api.github.com/search/issues?q=repo:Paul-DS/bootstrap-year-calendar%20created:${year}-01-01..${year}-12-31`)
-        //.then(result => result.json())
-        //.then(result => {
-          // if (result.items) {
-          //   return result.items.map(r => ({
-          //     startDate: new Date(r.created_at),
-          //     endDate: new Date(r.created_at),
-          //     name: '#' + r.number + ' - ' + r.title,
-          //     details: r.comments + ' comments'
-          //   }));
-        //   }
-
-        //   return [];
-        // });
-   
     //ini-IIB Tooltip
     mouseOnDay: function(e) {
       if (e.events.length > 0) {
@@ -289,23 +170,22 @@ export default {
     saveEvent: function() {
       if (this.currentId == null) {
         // Add event
-        var id = Math.max(...this.dataSource.map(evt => evt.id)) + 1;
-        
-        this.dataSource.push({
-          id: id,
+        let reserva = {
           startDate: new Date(this.currentStartDate),
           endDate: new Date(this.currentEndDate),
           name: this.currentName,
           location: this.currentLocation,
-        });
+        };
+        //db.collection('reservas').add(reserva);
+        this.reservas.add(reserva);
       }
       else {
         // Update event
-        var index = this.dataSource.findIndex(c => c.id == this.currentId);
-        this.dataSource[index].startDate = this.currentStartDate;
-        this.dataSource[index].endDate = this.currentEndDate;
-        this.dataSource[index].name = this.currentName;
-        this.dataSource[index].location = this.currentLocation;
+        var index = this.reservas.findIndex(c => c.id == this.currentId);
+        this.reservas[index].startDate = this.currentStartDate;
+        this.reservas[index].endDate = this.currentEndDate;
+        this.reservas[index].name = this.currentName;
+        this.reservas[index].location = this.currentLocation;
       }
     }
   }
