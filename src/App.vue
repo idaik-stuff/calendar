@@ -177,15 +177,15 @@ export default {
           location: this.currentLocation,
         };
         //db.collection('reservas').add(reserva);
-        this.reservas.add(reserva);
+        this.dataSource.push(reserva);
       }
       else {
         // Update event
-        var index = this.reservas.findIndex(c => c.id == this.currentId);
-        this.reservas[index].startDate = this.currentStartDate;
-        this.reservas[index].endDate = this.currentEndDate;
-        this.reservas[index].name = this.currentName;
-        this.reservas[index].location = this.currentLocation;
+        var index = this.dataSource.findIndex(c => c.id == this.currentId);
+        this.dataSource[index].startDate = this.currentStartDate;
+        this.dataSource[index].endDate = this.currentEndDate;
+        this.dataSource[index].name = this.currentName;
+        this.dataSource[index].location = this.currentLocation;
       }
     }
   }
