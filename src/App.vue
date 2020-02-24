@@ -170,22 +170,34 @@ export default {
     saveEvent: function() {
       if (this.currentId == null) {
         // Add event
+        var id = this.dataSource.length;
+        
+
         let reserva = {
-          startDate: new Date(this.currentStartDate),
-          endDate: new Date(this.currentEndDate),
+          id:id,
+          startDate: moment(this.currentStartDate).format('YYYY-MM-DD'),
+          endDate: moment(this.currentEndDate).format('YYYY-MM-DD'),
           name: this.currentName,
           location: this.currentLocation,
         };
-        //db.collection('reservas').add(reserva);
-        this.dataSource.push(reserva);
+      
+
+        //app.database().ref("reservas")
+        firebase.database().ref('reservas/' + id).set(reserva);
+
+         
       }
       else {
         // Update event
         var index = this.dataSource.findIndex(c => c.id == this.currentId);
-        this.dataSource[index].startDate = this.currentStartDate;
-        this.dataSource[index].endDate = this.currentEndDate;
-        this.dataSource[index].name = this.currentName;
-        this.dataSource[index].location = this.currentLocation;
+ 
+         firebase.database().ref('reservas/' + index).set({
+          id:index,
+          startDate: moment(this.currentStartDate).format('YYYY-MM-DD'),
+          endDate: moment(this.currentEndDate).format('YYYY-MM-DD'),
+          name: this.currentName,
+          location: this.currentLocation
+         });
       }
     }
   }
