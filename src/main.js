@@ -8,7 +8,6 @@ import App from './App.vue'
 // //IIB fin firebase
 import { firestorePlugin } from 'vuefire'
 
-
 //IIB
 import BootstrapVue from 'bootstrap-vue'
 
