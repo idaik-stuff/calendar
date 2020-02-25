@@ -106,7 +106,7 @@ export default {
         {
           text: "Borrar",
           click: evt => {
-            this.reservas = this.reservas.filter(item => item.id != evt.id);
+            firebase.database().ref('reservas/' + evt.id).remove();
           }
         }
       ]
@@ -115,12 +115,16 @@ export default {
   created: function() {
     let self = this;
     reservas_db.on("value", function(snapshot) {
-      let reservas = snapshot.val().map(reserva => Object.assign({}, reserva, {
+      let reservas = snapshot.val();
+      // Create a new array with all the reservations
+      let ds = [];
+      Object.values(reservas).map(reserva => Object.assign({}, reserva, {
               startDate: new Date(Date.parse(reserva.startDate)),
               endDate: new Date(Date.parse(reserva.endDate))
-            }));
-      console.log("EVENTS UPDATED", reservas);
-      self.dataSource = reservas;
+            }))
+            .forEach(reserva => ds.push(reserva));
+      //console.log("EVENTS UPDATED", ds);
+      self.dataSource = ds;
     });
   },
   methods: {
@@ -170,29 +174,20 @@ export default {
     saveEvent: function() {
       if (this.currentId == null) {
         // Add event
-        var id = this.dataSource.length;
-        
-
+        let newId = firebase.database().ref('reservas').push().key;
         let reserva = {
-          id:id,
+          id: newId,
           startDate: moment(this.currentStartDate).format('YYYY-MM-DD'),
           endDate: moment(this.currentEndDate).format('YYYY-MM-DD'),
           name: this.currentName,
           location: this.currentLocation,
         };
-      
-
-        //app.database().ref("reservas")
-        firebase.database().ref('reservas/' + id).set(reserva);
-
-         
-      }
-      else {
+        firebase.database().ref('reservas/' + newId).set(reserva);
+      } else {
         // Update event
-        var index = this.dataSource.findIndex(c => c.id == this.currentId);
- 
-         firebase.database().ref('reservas/' + index).set({
-          id:index,
+        let id = this.currentId;
+        firebase.database().ref('reservas/' + id).set({
+          id: id,
           startDate: moment(this.currentStartDate).format('YYYY-MM-DD'),
           endDate: moment(this.currentEndDate).format('YYYY-MM-DD'),
           name: this.currentName,
