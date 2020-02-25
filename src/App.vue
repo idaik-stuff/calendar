@@ -123,6 +123,11 @@ export default {
               endDate: new Date(Date.parse(reserva.endDate))
             }))
             .forEach(reserva => ds.push(reserva));
+      // BEGIN Dirty hack
+      if (ds.length === self.dataSource.length) {
+        ds.push({id:""});
+      }
+      // END Dirty hack
       //console.log("EVENTS UPDATED", ds);
       self.dataSource = ds;
     });
