@@ -5,8 +5,9 @@
             render-style="background"
             :enable-range-selection="true"
             :data-source="dataSource"
-            :enable-context-menu="true"
+            @enable-context-menu="showContext"
             :context-menu-items="contextMenuItems"
+            :min-date="minDate"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
             @select-range="selectRange">
@@ -90,6 +91,7 @@ export default {
       currentName: null,
       currentLocation: null,
       tooltip: null,
+      minDateString: '2020-01-01',
       contextMenuItems: [
         {
           text: "Actualizar",
@@ -100,7 +102,9 @@ export default {
             this.currentEndDate = moment(evt.endDate).format('YYYY-MM-DD');
             this.currentName = evt.name;
             this.currentLocation = evt.location;
-            this.show = true;
+            //IIB solo muestro la ventana de añadir  a partir de hoy 
+            this.show=true;
+            //this.show=(this.currentStartDate >= moment(Date()).format('YYYY-MM-DD'));
           }
         },
         {
@@ -112,8 +116,14 @@ export default {
       ]
     };
   },
+  computed: {
+    minDate: function() {
+      return this.minDateString != null ? new Date(this.minDateString) : null;
+    }
+  },
   created: function() {
     let self = this;
+       
     reservas_db.on("value", function(snapshot) {
       let reservas = snapshot.val();
       // Create a new array with all the reservations
@@ -133,8 +143,16 @@ export default {
     });
   },
   methods: {
+    showContext: function() {
+      return (this.currentStartDate >= moment(Date()).format('YYYY-MM-DD')); 
+           
+    },
+
     //ini-IIB Tooltip
     mouseOnDay: function(e) {
+
+
+
       if (e.events.length > 0) {
         var content = '';
 
@@ -174,7 +192,9 @@ export default {
       //IIB Cabio formato en fecha
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
-      this.show = true;
+      //IIB solo muestro la ventana de añadir  a partir de hoy 
+      //this.show=true;
+      this.show=(this.currentStartDate >= moment(Date()).format('YYYY-MM-DD'));
     },
     saveEvent: function() {
       if (this.currentId == null) {
