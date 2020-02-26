@@ -6,10 +6,10 @@
             :enable-range-selection="true"
             :data-source="dataSource"
             :enable-context-menu="true"
-            :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
-            @select-range="selectRange">
+            @select-range="selectRange"
+            @day-context-menu="dayContextMenu">
   </Calendar>
   
 <b-modal :title="currentId != null ? 'Editar evento' : 'Añadir evento'" ok-title="Guardar" v-model="show" @ok="saveEvent">
