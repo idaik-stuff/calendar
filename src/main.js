@@ -14,7 +14,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.use(BootstrapVue,firestorePlugin)
+Vue.use(BootstrapVue, firestorePlugin)
 
 Vue.config.productionTip = false
 
