@@ -190,7 +190,7 @@ export default {
       //IIB Cabio formato en fecha
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
-      this.show = true;
+      this.show = !moment(e.startDate).isBefore(moment());
     },
     saveEvent: function() {
       if (this.currentId == null) {
