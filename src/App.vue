@@ -177,6 +177,12 @@ export default {
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
       this.show = true;
     },
+    dayContextMenu: function(e) {
+      //console.log(e);
+      if (!moment(e.date).isBefore(moment())) {
+        e.calendar._openContextMenu(e.element);
+      }
+    },
     saveEvent: function() {
       if (this.currentId == null) {
         // Add event
