@@ -52,7 +52,9 @@ import 'v-year-calendar/locales/v-year-calendar.es'
 
 import moment from 'moment'
 import tippy from 'tippy.js'
+
 import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/shift-away.css'
 
 //IIB ini-Firebse
 import * as firebase from 'firebase/app'
@@ -153,7 +155,6 @@ export default {
         this.tooltip = tippy(e.element, {
            placement: 'right',
             content: content,
-            animateFill: false,
             animation: 'shift-away',
             arrow: true
         });
