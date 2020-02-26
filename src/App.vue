@@ -6,10 +6,10 @@
             :enable-range-selection="true"
             :data-source="dataSource"
             :enable-context-menu="true"
-            :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
-            @select-range="selectRange">
+            @select-range="selectRange"
+            @day-context-menu="dayContextMenu">
   </Calendar>
   
 <b-modal :title="currentId != null ? 'Editar evento' : 'Añadir evento'" ok-title="Guardar" v-model="show" @ok="saveEvent">
@@ -52,7 +52,9 @@ import 'v-year-calendar/locales/v-year-calendar.es'
 
 import moment from 'moment'
 import tippy from 'tippy.js'
+
 import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/shift-away.css'
 
 //IIB ini-Firebse
 import * as firebase from 'firebase/app'
@@ -153,7 +155,6 @@ export default {
         this.tooltip = tippy(e.element, {
            placement: 'right',
             content: content,
-            animateFill: false,
             animation: 'shift-away',
             arrow: true
         });
@@ -175,6 +176,12 @@ export default {
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
       this.show = true;
+    },
+    dayContextMenu: function(e) {
+      //console.log(e);
+      if (!moment(e.date).isBefore(moment())) {
+        e.calendar._openContextMenu(e.element);
+      }
     },
     saveEvent: function() {
       if (this.currentId == null) {
