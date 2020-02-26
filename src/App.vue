@@ -1,15 +1,15 @@
 <template>
   <div id="app">        
-      <Calendar
+      <Calendar ref="cal"
             language="es"
             render-style="background"
             :enable-range-selection="true"
             :data-source="dataSource"
-            :enable-context-menu="true"
+            :enable-context-menu="false"
+            :context-menu-items="contextMenuItems"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
-            @select-range="selectRange"
-            @day-context-menu="dayContextMenu">
+            @select-range="selectRange">
   </Calendar>
   
 <b-modal :title="currentId != null ? 'Editar evento' : 'Añadir evento'" ok-title="Guardar" v-model="show" @ok="saveEvent">
@@ -134,6 +134,21 @@ export default {
       self.dataSource = ds;
     });
   },
+  updated: function() {
+    let vcal = this.$refs.cal;
+    let cells = vcal.$el.querySelectorAll('.day:not(.old):not(.new):not(.disabled)');
+    cells.forEach(cell => {
+			cell.addEventListener('contextmenu', e => {
+        let date = vcal.calendar._getDate(e.currentTarget);
+        if (!moment(date).isBefore(moment())) {
+					e.preventDefault();
+					if (vcal.calendar.options.contextMenuItems.length > 0) {
+						vcal.calendar._openContextMenu(e.currentTarget);
+					}
+				}
+      });
+    });
+  },
   methods: {
     //ini-IIB Tooltip
     mouseOnDay: function(e) {
@@ -176,12 +191,6 @@ export default {
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
       this.show = true;
-    },
-    dayContextMenu: function(e) {
-      //console.log(e);
-      if (!moment(e.date).isBefore(moment())) {
-        e.calendar._openContextMenu(e.element);
-      }
     },
     saveEvent: function() {
       if (this.currentId == null) {
