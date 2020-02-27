@@ -1,21 +1,23 @@
 <template>
-  <div id="app">        
+  <div id="app">  
+    <div class="card">
+    <div class="card-header" style ="font-weight: bold; font-size: xx-large;">TAKIDA's HOUSE</div>
+    <div class="card-body row">      
       <Calendar ref="cal"
             language="es"
             render-style="background"
             :enable-range-selection="true"
             :data-source="dataSource"
-<<<<<<< HEAD
-            @enable-context-menu="showContext"
-=======
             :enable-context-menu="false"
->>>>>>> 3ad7871b49fc98aefc47788152f99cebd063b3bd
             :context-menu-items="contextMenuItems"
             :min-date="minDate"
             @mouse-on-day="mouseOnDay" 
             @mouse-out-day="mouseOutDay"
             @select-range="selectRange">
   </Calendar>
+      </div>
+  </div>
+
   
 <b-modal :title="currentId != null ? 'Editar evento' : 'Añadir evento'" ok-title="Guardar" v-model="show" @ok="saveEvent">
     <form class="form-horizontal">
@@ -212,13 +214,7 @@ export default {
       //IIB Cabio formato en fecha
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
-<<<<<<< HEAD
-      //IIB solo muestro la ventana de añadir  a partir de hoy 
-      //this.show=true;
-      this.show=(this.currentStartDate >= moment(Date()).format('YYYY-MM-DD'));
-=======
       this.show = !moment(e.startDate).isBefore(moment());
->>>>>>> 3ad7871b49fc98aefc47788152f99cebd063b3bd
     },
     saveEvent: function() {
       if (this.currentId == null) {
