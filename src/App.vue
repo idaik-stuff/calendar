@@ -1,11 +1,15 @@
 <template>
   <div id="app">        
-      <Calendar
+      <Calendar ref="cal"
             language="es"
             render-style="background"
             :enable-range-selection="true"
             :data-source="dataSource"
+<<<<<<< HEAD
             @enable-context-menu="showContext"
+=======
+            :enable-context-menu="false"
+>>>>>>> 3ad7871b49fc98aefc47788152f99cebd063b3bd
             :context-menu-items="contextMenuItems"
             :min-date="minDate"
             @mouse-on-day="mouseOnDay" 
@@ -53,7 +57,9 @@ import 'v-year-calendar/locales/v-year-calendar.es'
 
 import moment from 'moment'
 import tippy from 'tippy.js'
+
 import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/shift-away.css'
 
 //IIB ini-Firebse
 import * as firebase from 'firebase/app'
@@ -142,6 +148,21 @@ export default {
       self.dataSource = ds;
     });
   },
+  updated: function() {
+    let vcal = this.$refs.cal;
+    let cells = vcal.$el.querySelectorAll('.day:not(.old):not(.new):not(.disabled)');
+    cells.forEach(cell => {
+			cell.addEventListener('contextmenu', e => {
+        let date = vcal.calendar._getDate(e.currentTarget);
+        if (!moment(date).isBefore(moment())) {
+					e.preventDefault();
+					if (vcal.calendar.options.contextMenuItems.length > 0) {
+						vcal.calendar._openContextMenu(e.currentTarget);
+					}
+				}
+      });
+    });
+  },
   methods: {
     showContext: function() {
       return (this.currentStartDate >= moment(Date()).format('YYYY-MM-DD')); 
@@ -171,7 +192,6 @@ export default {
         this.tooltip = tippy(e.element, {
            placement: 'right',
             content: content,
-            animateFill: false,
             animation: 'shift-away',
             arrow: true
         });
@@ -192,9 +212,13 @@ export default {
       //IIB Cabio formato en fecha
       this.currentStartDate = moment(e.startDate).format('YYYY-MM-DD');
       this.currentEndDate = moment(e.endDate).format('YYYY-MM-DD');
+<<<<<<< HEAD
       //IIB solo muestro la ventana de añadir  a partir de hoy 
       //this.show=true;
       this.show=(this.currentStartDate >= moment(Date()).format('YYYY-MM-DD'));
+=======
+      this.show = !moment(e.startDate).isBefore(moment());
+>>>>>>> 3ad7871b49fc98aefc47788152f99cebd063b3bd
     },
     saveEvent: function() {
       if (this.currentId == null) {
