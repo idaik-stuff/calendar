@@ -1,2 +1,7 @@
+# start up tasks
 tasks:
-  - init: npm install && npm run build
+- init: npm install && npm run serve
+# exposed ports
+ports:
+- port: 8080
+  onOpen: open-preview
